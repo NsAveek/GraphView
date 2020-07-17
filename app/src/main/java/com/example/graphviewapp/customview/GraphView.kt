@@ -69,8 +69,6 @@ class GraphView @JvmOverloads constructor(context: Context, attrs: AttributeSet?
         return dp*context.resources.displayMetrics.density
     }
     private fun translateToCanvasY( y : Float) : Float{
-        Log.d("canvas y : ", (actualHeight.toFloat() - y).toString())
-//        return convertDpToPx(actualHeight.toFloat()) - y
         return actualHeight.toFloat() - y
     }
     private fun translateToCanvasX(canvas: Canvas, x : Float) : Float{
@@ -96,7 +94,6 @@ class GraphView @JvmOverloads constructor(context: Context, attrs: AttributeSet?
     }
 
     private fun drawCoordinates(canvas: Canvas) {
-//        path.moveTo(0f+extraPadding, translateToCanvasY(0f+extraPadding))
         path.moveTo(0f+extraPadding, canvas.height+extraPadding)
 
         for (i in coordinates) {
