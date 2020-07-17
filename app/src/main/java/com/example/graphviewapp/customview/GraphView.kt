@@ -24,7 +24,7 @@ class GraphView @JvmOverloads constructor(context: Context, attrs: AttributeSet?
 
     private var path : Path
     private var paint : Paint
-    private var extraPadding = 10f
+    private var extraPadding = 0f
 
     private lateinit var coordinates : ArrayList<Pair<Float,Float>>
     private var maxXValue : Float = 0f
@@ -81,7 +81,7 @@ class GraphView @JvmOverloads constructor(context: Context, attrs: AttributeSet?
         super.onMeasure(widthMeasureSpec, heightMeasureSpec)
         eachPixelAllocationX = MeasureSpec.getSize(widthMeasureSpec)/maxXValue
         eachPixelAllocationY = MeasureSpec.getSize(heightMeasureSpec)/maxYValue
-        extraPadding = eachPixelAllocationX*2
+//        extraPadding = eachPixelAllocationX*2
         setMeasuredDimension(widthMeasureSpec-extraPadding.toInt(),heightMeasureSpec-extraPadding.toInt())
     }
 
