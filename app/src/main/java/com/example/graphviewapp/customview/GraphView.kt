@@ -1,14 +1,12 @@
 package com.example.graphviewapp.customview
 
 import android.content.Context
-import android.graphics.Canvas
-import android.graphics.Color
-import android.graphics.Paint
-import android.graphics.Path
+import android.graphics.*
 import android.util.AttributeSet
 import android.util.Log
 import android.view.View
 import androidx.annotation.Px
+import androidx.core.content.ContextCompat
 import com.example.graphviewapp.R
 
 // TODO
@@ -20,15 +18,19 @@ import com.example.graphviewapp.R
 // 6. Get the initial starting co-ordinates from the user/system ( i.e: topToBottom or bottomToTop)
 
 
-class GraphView @JvmOverloads constructor(context: Context, attrs: AttributeSet? = null) : View(context, attrs) {
+class GraphView @JvmOverloads constructor(context: Context, attrs: AttributeSet? = null) :
+    View(context, attrs) {
 
-    private var path : Path
-    private var paint : Paint
+    private var path: Path
+    private var pathPaint: Paint
+    private var gradientPaint: Paint
+    private var colorsArray: IntArray
+    private var circlePaint: Paint
     private var extraPadding = 0f
 
-    private lateinit var coordinates : ArrayList<Pair<Float,Float>>
-    private var maxXValue : Float = 0f
-    private var maxYValue : Float = 0f
+    private lateinit var coordinates: ArrayList<Pair<Float, Float>>
+    private var maxXValue: Float = 0f
+    private var maxYValue: Float = 0f
 
     private var eachPixelAllocationX = 0f
     private var eachPixelAllocationY = 0f
@@ -36,77 +38,138 @@ class GraphView @JvmOverloads constructor(context: Context, attrs: AttributeSet?
     private var actualWidth = 0
     private var actualHeight = 0
 
-    init{
+    init {
         val a = context.obtainStyledAttributes(
-            attrs, R.styleable.GraphView)
+            attrs, R.styleable.GraphView
+        )
+        colorsArray = intArrayOf(
+            ContextCompat.getColor(context, R.color.startColor),
+            ContextCompat.getColor(context, R.color.endColor)
+        )
+
         path = Path()
-        paint = Paint().apply {
-            color = Color.BLUE
+
+        pathPaint = Paint().apply {
+            color = ContextCompat.getColor(context, R.color.pathColor)
             isAntiAlias = true
             style = Paint.Style.STROKE
             strokeWidth = 5f
             isDither = true
         }
+        gradientPaint = Paint().apply {
+            style = Paint.Style.FILL
+        }
+        circlePaint = Paint().apply {
+            color = Color.RED
+            isAntiAlias = true
+        }
         a.recycle()
     }
 
-    fun setCoordinatePoints(coordinates : ArrayList<Pair<Float,Float>>){
+    fun setCoordinatePoints(coordinates: ArrayList<Pair<Float, Float>>) {
         this.coordinates = coordinates
         getMaxCoordinateValues()
         invalidate()
     }
 
-    private fun getMaxCoordinateValues(){
-        for(i in coordinates){
+    private fun getMaxCoordinateValues() {
+        for (i in coordinates) {
             if (i.first > maxXValue) maxXValue = convertDpToPx(i.first)
             if (i.second > maxYValue) maxYValue = convertDpToPx(i.second)
         }
     }
-    private fun convertPxToDp(px: Float) : Float{
-        return px/context.resources.displayMetrics.density
+
+    private fun convertPxToDp(px: Float): Float {
+        return px / context.resources.displayMetrics.density
     }
-    private fun convertDpToPx(dp : Float) :Float{
-        return dp*context.resources.displayMetrics.density
+
+    private fun convertDpToPx(dp: Float): Float {
+        return dp * context.resources.displayMetrics.density
     }
-    private fun translateToCanvasY( y : Float) : Float{
+
+    private fun translateToCanvasY(y: Float): Float {
         return actualHeight.toFloat() - y
     }
-    private fun translateToCanvasX(canvas: Canvas, x : Float) : Float{
+
+    private fun translateToCanvasX(canvas: Canvas, x: Float): Float {
         return x
     }
 
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
         super.onMeasure(widthMeasureSpec, heightMeasureSpec)
-        eachPixelAllocationX = MeasureSpec.getSize(widthMeasureSpec)/maxXValue
-        eachPixelAllocationY = MeasureSpec.getSize(heightMeasureSpec)/maxYValue
+        eachPixelAllocationX = MeasureSpec.getSize(widthMeasureSpec) / maxXValue
+        eachPixelAllocationY = MeasureSpec.getSize(heightMeasureSpec) / maxYValue
 //        extraPadding = eachPixelAllocationX*2
-        setMeasuredDimension(widthMeasureSpec-extraPadding.toInt(),heightMeasureSpec-extraPadding.toInt())
+        setMeasuredDimension(
+            widthMeasureSpec - extraPadding.toInt(),
+            heightMeasureSpec - extraPadding.toInt()
+        )
     }
 
     override fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {
         actualWidth = w
         actualHeight = h
+        gradientPaint.shader = LinearGradient(0f, 0f, 0f, actualHeight.toFloat(), colorsArray,null, Shader.TileMode.CLAMP)
         super.onSizeChanged(w, h, oldw, oldh)
     }
+
     override fun onDraw(canvas: Canvas) {
         super.onDraw(canvas)
+
+        drawGradients(canvas)
         drawCoordinates(canvas)
     }
 
-    private fun drawCoordinates(canvas: Canvas) {
-        path.moveTo(0f+extraPadding, canvas.height+extraPadding)
+    private fun drawGradients(canvas: Canvas) {
+        path.reset()
+        path.moveTo(0f + extraPadding, canvas.height + extraPadding)
 
         for (i in coordinates) {
-            path.lineTo((i.first*eachPixelAllocationX)+extraPadding, translateToCanvasY(i.second*eachPixelAllocationY)+extraPadding)
-            path.moveTo((i.first*eachPixelAllocationX)+extraPadding, translateToCanvasY(i.second*eachPixelAllocationY)+extraPadding)
+            path.lineTo(
+                (i.first * eachPixelAllocationX) + extraPadding,
+                translateToCanvasY(i.second * eachPixelAllocationY) + extraPadding
+            )
+            path.moveTo(
+                (i.first * eachPixelAllocationX) + extraPadding,
+                translateToCanvasY(i.second * eachPixelAllocationY) + extraPadding
+            )
+        }
+        path.lineTo(canvas.width.toFloat(), canvas.height.toFloat())
+        path.lineTo(0f + extraPadding, canvas.height + extraPadding)
+        path.close()
+        canvas.drawPath(path, gradientPaint)
+    }
+
+    private fun drawCoordinates(canvas: Canvas) {
+        path.reset()
+        path.moveTo(0f + extraPadding, canvas.height + extraPadding)
+
+        for (i in coordinates) {
+            path.lineTo(
+                (i.first * eachPixelAllocationX) + extraPadding,
+                translateToCanvasY(i.second * eachPixelAllocationY) + extraPadding
+            )
+            path.moveTo(
+                (i.first * eachPixelAllocationX) + extraPadding,
+                translateToCanvasY(i.second * eachPixelAllocationY) + extraPadding
+            )
+
 //            path.lineTo((i.first*eachPixelAllocationX)+extraPadding, (i.second*eachPixelAllocationY)+extraPadding)
 //            path.moveTo((i.first*eachPixelAllocationX)+extraPadding, (i.second*eachPixelAllocationY)+extraPadding)
-
-            Log.d("x : y = ", i.first.toString() + " : "+i.second.toString())
+            drawCircle(
+                canvas,
+                i.first * eachPixelAllocationX + extraPadding,
+                translateToCanvasY(i.second * eachPixelAllocationY) + extraPadding
+            )
+            Log.d("x : y = ", i.first.toString() + " : " + i.second.toString())
         }
-        path.lineTo(canvas.width.toFloat(),canvas.height.toFloat())
-        path.moveTo(canvas.width.toFloat(),canvas.height.toFloat())
+        path.lineTo(canvas.width.toFloat(), canvas.height.toFloat())
+        path.moveTo(canvas.width.toFloat(), canvas.height.toFloat())
         path.close()
-        canvas.drawPath(path, paint)
+        canvas.drawPath(path, pathPaint)
+    }
+
+    private fun drawCircle(canvas: Canvas, cx: Float, cy: Float) {
+        canvas.drawCircle(cx, cy, 10f, circlePaint)
     }
 }
