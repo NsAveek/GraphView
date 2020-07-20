@@ -7,4 +7,7 @@
     <color name="pathColor">#30d6af</color>
     <color name="startColor">#abf0ea</color>
     <color name="endColor">#edfef7</color>
+
+
+    <color name="graduationColor">#aab6c3</color>
 </resources>

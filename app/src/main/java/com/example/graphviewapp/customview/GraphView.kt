@@ -25,6 +25,7 @@ class GraphView @JvmOverloads constructor(context: Context, attrs: AttributeSet?
     private var path: Path
     private var pathPaint: Paint
     private var gradientPaint: Paint
+    private var graduationPathPaint: Paint
     private var colorsArray: IntArray
     private var circlePaint: Paint
     private var extraPadding = 0f
@@ -58,7 +59,14 @@ class GraphView @JvmOverloads constructor(context: Context, attrs: AttributeSet?
             isDither = true
         }
         gradientPaint = Paint().apply {
+            isAntiAlias =true
             style = Paint.Style.FILL
+        }
+        graduationPathPaint = Paint().apply {
+            style = Paint.Style.STROKE
+            isAntiAlias = true
+            color = ContextCompat.getColor(context, R.color.graduationColor)
+            textSize = 40F
         }
         circlePaint = Paint().apply {
             color = ContextCompat.getColor(context, R.color.pathColor)
@@ -124,6 +132,7 @@ class GraphView @JvmOverloads constructor(context: Context, attrs: AttributeSet?
 
         drawGradients(canvas)
         drawCoordinates(canvas)
+        drawGraduations(canvas)
     }
 
     private fun drawGradients(canvas: Canvas) {
@@ -158,10 +167,15 @@ class GraphView @JvmOverloads constructor(context: Context, attrs: AttributeSet?
             )
             Log.d("x : y = ", i.first.toString() + " : " + i.second.toString())
         }
-        path.lineTo(canvas.width.toFloat(), canvas.height.toFloat())
-        path.moveTo(canvas.width.toFloat(), canvas.height.toFloat()) // Important to remove the draw line back to initial coordinate
-        path.close()
+//        path.lineTo(canvas.width.toFloat(), canvas.height.toFloat())
+//        path.moveTo(canvas.width.toFloat(), canvas.height.toFloat()) // Important to remove the draw line back to initial coordinate
+//        path.close()
         canvas.drawPath(path, pathPaint)
+    }
+    private fun drawGraduations(canvas: Canvas){
+        for (i in coordinates){
+            canvas.drawText(i.first.toString(),i.first*eachPixelAllocationX,canvas.height.toFloat(),graduationPathPaint)
+        }
     }
 
     private fun drawCircle(canvas: Canvas, cx: Float, cy: Float) {
