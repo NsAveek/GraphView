@@ -11,6 +11,7 @@ import com.example.graphviewapp.R
 
 // TODO
 // 1. Get points or co-ordinates from the user/system
+// 2. Sort the X co-ordinates
 // 2. Get colors from the user/system
 // 3. Get the graph shape (i.e : Bar, Pie ) from the user/system
 // 4. Get the thickness of the lines from the user/system
@@ -60,7 +61,7 @@ class GraphView @JvmOverloads constructor(context: Context, attrs: AttributeSet?
             style = Paint.Style.FILL
         }
         circlePaint = Paint().apply {
-            color = Color.RED
+            color = ContextCompat.getColor(context, R.color.pathColor)
             isAntiAlias = true
         }
         a.recycle()
@@ -69,6 +70,7 @@ class GraphView @JvmOverloads constructor(context: Context, attrs: AttributeSet?
     fun setCoordinatePoints(coordinates: ArrayList<Pair<Float, Float>>) {
         this.coordinates = coordinates
         getMaxCoordinateValues()
+        sortXCoordinates()
         invalidate()
     }
 
@@ -77,6 +79,9 @@ class GraphView @JvmOverloads constructor(context: Context, attrs: AttributeSet?
             if (i.first > maxXValue) maxXValue = convertDpToPx(i.first)
             if (i.second > maxYValue) maxYValue = convertDpToPx(i.second)
         }
+    }
+    private fun sortXCoordinates(){
+
     }
 
     private fun convertPxToDp(px: Float): Float {
@@ -109,7 +114,8 @@ class GraphView @JvmOverloads constructor(context: Context, attrs: AttributeSet?
     override fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {
         actualWidth = w
         actualHeight = h
-        gradientPaint.shader = LinearGradient(0f, 0f, 0f, actualHeight.toFloat(), colorsArray,null, Shader.TileMode.CLAMP)
+        val positions = floatArrayOf(0f,1f)
+        gradientPaint.shader = LinearGradient(0f, 0f, 0f, actualHeight.toFloat(), colorsArray,positions, Shader.TileMode.CLAMP)
         super.onSizeChanged(w, h, oldw, oldh)
     }
 
@@ -129,13 +135,9 @@ class GraphView @JvmOverloads constructor(context: Context, attrs: AttributeSet?
                 (i.first * eachPixelAllocationX) + extraPadding,
                 translateToCanvasY(i.second * eachPixelAllocationY) + extraPadding
             )
-            path.moveTo(
-                (i.first * eachPixelAllocationX) + extraPadding,
-                translateToCanvasY(i.second * eachPixelAllocationY) + extraPadding
-            )
         }
         path.lineTo(canvas.width.toFloat(), canvas.height.toFloat())
-        path.lineTo(0f + extraPadding, canvas.height + extraPadding)
+//        path.lineTo(0f + extraPadding, canvas.height + extraPadding) // No need as default the path draws another line back to initial coordinates
         path.close()
         canvas.drawPath(path, gradientPaint)
     }
@@ -149,13 +151,6 @@ class GraphView @JvmOverloads constructor(context: Context, attrs: AttributeSet?
                 (i.first * eachPixelAllocationX) + extraPadding,
                 translateToCanvasY(i.second * eachPixelAllocationY) + extraPadding
             )
-            path.moveTo(
-                (i.first * eachPixelAllocationX) + extraPadding,
-                translateToCanvasY(i.second * eachPixelAllocationY) + extraPadding
-            )
-
-//            path.lineTo((i.first*eachPixelAllocationX)+extraPadding, (i.second*eachPixelAllocationY)+extraPadding)
-//            path.moveTo((i.first*eachPixelAllocationX)+extraPadding, (i.second*eachPixelAllocationY)+extraPadding)
             drawCircle(
                 canvas,
                 i.first * eachPixelAllocationX + extraPadding,
@@ -164,7 +159,7 @@ class GraphView @JvmOverloads constructor(context: Context, attrs: AttributeSet?
             Log.d("x : y = ", i.first.toString() + " : " + i.second.toString())
         }
         path.lineTo(canvas.width.toFloat(), canvas.height.toFloat())
-        path.moveTo(canvas.width.toFloat(), canvas.height.toFloat())
+        path.moveTo(canvas.width.toFloat(), canvas.height.toFloat()) // Important to remove the draw line back to initial coordinate
         path.close()
         canvas.drawPath(path, pathPaint)
     }
