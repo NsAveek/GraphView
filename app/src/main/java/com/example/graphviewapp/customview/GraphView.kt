@@ -28,7 +28,7 @@ class GraphView @JvmOverloads constructor(context: Context, attrs: AttributeSet?
     private var graduationPathPaint: Paint
     private var colorsArray: IntArray
     private var circlePaint: Paint
-    private var extraPadding = 0f
+    private var extraPadding = convertPxToDp(100f)
 
     private lateinit var coordinates: ArrayList<Pair<Float, Float>>
     private var maxXValue: Float = 0f
@@ -84,8 +84,8 @@ class GraphView @JvmOverloads constructor(context: Context, attrs: AttributeSet?
 
     private fun getMaxCoordinateValues() {
         for (i in coordinates) {
-            if (i.first > maxXValue) maxXValue = convertDpToPx(i.first)
-            if (i.second > maxYValue) maxYValue = convertDpToPx(i.second)
+            if (i.first > maxXValue) maxXValue = i.first
+            if (i.second > maxYValue) maxYValue = i.second
         }
     }
     private fun sortXCoordinates(){
@@ -110,12 +110,14 @@ class GraphView @JvmOverloads constructor(context: Context, attrs: AttributeSet?
 
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
         super.onMeasure(widthMeasureSpec, heightMeasureSpec)
-        eachPixelAllocationX = MeasureSpec.getSize(widthMeasureSpec) / maxXValue
-        eachPixelAllocationY = MeasureSpec.getSize(heightMeasureSpec) / maxYValue
+        val measuredWidth = MeasureSpec.getSize(widthMeasureSpec)
+        val measuredHeight = MeasureSpec.getSize(heightMeasureSpec)
+        eachPixelAllocationX =  (measuredWidth-extraPadding*2)/ maxXValue
+        eachPixelAllocationY =  (measuredHeight-extraPadding*2)/ maxYValue
 //        extraPadding = eachPixelAllocationX*2
         setMeasuredDimension(
-            widthMeasureSpec - extraPadding.toInt(),
-            heightMeasureSpec - extraPadding.toInt()
+            measuredWidth,
+            measuredHeight
         )
     }
 
@@ -130,40 +132,47 @@ class GraphView @JvmOverloads constructor(context: Context, attrs: AttributeSet?
     override fun onDraw(canvas: Canvas) {
         super.onDraw(canvas)
 
-        drawGradients(canvas)
+//        drawGradients(canvas)
         drawCoordinates(canvas)
         drawGraduations(canvas)
     }
 
     private fun drawGradients(canvas: Canvas) {
         path.reset()
-        path.moveTo(0f + extraPadding, canvas.height + extraPadding)
-
+        var firstPathDraw : Boolean = true
         for (i in coordinates) {
+            if (firstPathDraw){
+                path.moveTo((i.first * eachPixelAllocationX), translateToCanvasY(i.second * eachPixelAllocationY))
+                firstPathDraw = false
+            }
             path.lineTo(
                 (i.first * eachPixelAllocationX) + extraPadding,
                 translateToCanvasY(i.second * eachPixelAllocationY) + extraPadding
             )
         }
-        path.lineTo(canvas.width.toFloat(), canvas.height.toFloat())
+        path.lineTo(maxXValue*eachPixelAllocationX, canvas.height.toFloat())
 //        path.lineTo(0f + extraPadding, canvas.height + extraPadding) // No need as default the path draws another line back to initial coordinates
-        path.close()
+//        path.close()
         canvas.drawPath(path, gradientPaint)
     }
 
     private fun drawCoordinates(canvas: Canvas) {
         path.reset()
-        path.moveTo(0f + extraPadding, canvas.height + extraPadding)
-
+//        path.moveTo(0f + extraPadding, canvas.height + extraPadding)
+        var firstPathDraw : Boolean = true
         for (i in coordinates) {
+            if (firstPathDraw){
+                path.moveTo(reCalculateExactCoordinateWithPadding(i.first * eachPixelAllocationX,true), reCalculateExactCoordinateWithPadding(translateToCanvasY(i.second * eachPixelAllocationY),false))
+                firstPathDraw = false
+            }
             path.lineTo(
-                (i.first * eachPixelAllocationX) + extraPadding,
-                translateToCanvasY(i.second * eachPixelAllocationY) + extraPadding
+                reCalculateExactCoordinateWithPadding(i.first * eachPixelAllocationX,true),
+                reCalculateExactCoordinateWithPadding(translateToCanvasY(i.second * eachPixelAllocationY),false)
             )
             drawCircle(
                 canvas,
-                i.first * eachPixelAllocationX + extraPadding,
-                translateToCanvasY(i.second * eachPixelAllocationY) + extraPadding
+                reCalculateExactCoordinateWithPadding(i.first * eachPixelAllocationX,true),
+                reCalculateExactCoordinateWithPadding(translateToCanvasY(i.second * eachPixelAllocationY),false)
             )
             Log.d("x : y = ", i.first.toString() + " : " + i.second.toString())
         }
@@ -174,11 +183,19 @@ class GraphView @JvmOverloads constructor(context: Context, attrs: AttributeSet?
     }
     private fun drawGraduations(canvas: Canvas){
         for (i in coordinates){
-            canvas.drawText(i.first.toString(),i.first*eachPixelAllocationX,canvas.height.toFloat(),graduationPathPaint)
+            canvas.drawText(i.first.toString(),reCalculateExactCoordinateWithPadding(i.first*eachPixelAllocationX, true),canvas.height.toFloat(),graduationPathPaint)
+            canvas.drawText(i.second.toString(),0f,reCalculateExactCoordinateWithPadding(translateToCanvasY(i.second*eachPixelAllocationY),false),graduationPathPaint)
         }
     }
 
     private fun drawCircle(canvas: Canvas, cx: Float, cy: Float) {
         canvas.drawCircle(cx, cy, 10f, circlePaint)
+    }
+
+    private fun reCalculateExactCoordinateWithPadding(coord : Float, x : Boolean): Float{
+        return when(x){
+            true -> coord + extraPadding
+            false -> coord - extraPadding
+        }
     }
 }
