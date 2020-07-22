@@ -132,7 +132,7 @@ class GraphView @JvmOverloads constructor(context: Context, attrs: AttributeSet?
     override fun onDraw(canvas: Canvas) {
         super.onDraw(canvas)
 
-//        drawGradients(canvas)
+        drawGradients(canvas)
         drawCoordinates(canvas)
         drawGraduations(canvas)
     }
@@ -142,23 +142,20 @@ class GraphView @JvmOverloads constructor(context: Context, attrs: AttributeSet?
         var firstPathDraw : Boolean = true
         for (i in coordinates) {
             if (firstPathDraw){
-                path.moveTo((i.first * eachPixelAllocationX), translateToCanvasY(i.second * eachPixelAllocationY))
+                path.moveTo(reCalculateExactCoordinateWithPadding(i.first * eachPixelAllocationX,true), reCalculateExactCoordinateWithPadding(translateToCanvasY(i.second * eachPixelAllocationY),false))
                 firstPathDraw = false
             }
             path.lineTo(
-                (i.first * eachPixelAllocationX) + extraPadding,
-                translateToCanvasY(i.second * eachPixelAllocationY) + extraPadding
+                reCalculateExactCoordinateWithPadding(i.first * eachPixelAllocationX,true),
+                reCalculateExactCoordinateWithPadding(translateToCanvasY(i.second * eachPixelAllocationY),false)
             )
         }
-        path.lineTo(maxXValue*eachPixelAllocationX, canvas.height.toFloat())
-//        path.lineTo(0f + extraPadding, canvas.height + extraPadding) // No need as default the path draws another line back to initial coordinates
-//        path.close()
+        path.lineTo(reCalculateExactCoordinateWithPadding(maxXValue*eachPixelAllocationX,true), reCalculateExactCoordinateWithPadding(canvas.height.toFloat(),false))
         canvas.drawPath(path, gradientPaint)
     }
 
     private fun drawCoordinates(canvas: Canvas) {
         path.reset()
-//        path.moveTo(0f + extraPadding, canvas.height + extraPadding)
         var firstPathDraw : Boolean = true
         for (i in coordinates) {
             if (firstPathDraw){
@@ -176,9 +173,6 @@ class GraphView @JvmOverloads constructor(context: Context, attrs: AttributeSet?
             )
             Log.d("x : y = ", i.first.toString() + " : " + i.second.toString())
         }
-//        path.lineTo(canvas.width.toFloat(), canvas.height.toFloat())
-//        path.moveTo(canvas.width.toFloat(), canvas.height.toFloat()) // Important to remove the draw line back to initial coordinate
-//        path.close()
         canvas.drawPath(path, pathPaint)
     }
     private fun drawGraduations(canvas: Canvas){
