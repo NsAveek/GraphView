@@ -17,14 +17,16 @@ class MainActivity : AppCompatActivity() {
         initCoordinates()
 
         val graphView = findViewById<GraphView>(R.id.graphView)
+        val graphView2 = findViewById<GraphView>(R.id.graphView2)
         graphView.setCoordinatePoints(coordinates)
+        graphView2.setCoordinatePoints(coordinates)
 
         initRedrawButton()
     }
 
     private fun initCoordinates() {
-        coordinates.add(Pair(0f,0f))
-        coordinates.add(Pair(1f,2f))
+//        coordinates.add(Pair(0f,0f))
+//        coordinates.add(Pair(1f,2f))
         coordinates.add(Pair(3f,4f))
         coordinates.add(Pair(4f,3f))
         coordinates.add(Pair(5f,5f))
@@ -51,14 +53,15 @@ class MainActivity : AppCompatActivity() {
         coordinates.add(Pair(32f,11f))
         coordinates.add(Pair(33f,9f))
         coordinates.add(Pair(35f,3f))
-
-        coordinates.add(Pair(37f,7f))
-        coordinates.add(Pair(39f,6f))
-        coordinates.add(Pair(41f,4f))
-        coordinates.add(Pair(42f,1f))
-        coordinates.add(Pair(43f,1f))
-        coordinates.add(Pair(45f,8f))
+//
+//        coordinates.add(Pair(37f,7f))
+//        coordinates.add(Pair(39f,6f))
+//        coordinates.add(Pair(41f,4f))
+//        coordinates.add(Pair(42f,1f))
+//        coordinates.add(Pair(43f,1f))
+//        coordinates.add(Pair(45f,8f))
     }
+
     private fun initRedrawButton(){
         button = findViewById(R.id.redraw)
         button.setOnClickListener {
