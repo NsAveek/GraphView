@@ -25,34 +25,34 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun initCoordinates() {
-        coordinates.add(Pair(0f,0f))
+//        coordinates.add(Pair(0f,0f))
         coordinates.add(Pair(1f,2f))
         coordinates.add(Pair(3f,4f))
         coordinates.add(Pair(4f,3f))
         coordinates.add(Pair(5f,5f))
         coordinates.add(Pair(6f,4f))
         coordinates.add(Pair(7f,2f))
-
-        coordinates.add(Pair(9f,2f))
-        coordinates.add(Pair(10f,4f))
-        coordinates.add(Pair(11f,3f))
-        coordinates.add(Pair(12f,5f))
-        coordinates.add(Pair(13f,4f))
-        coordinates.add(Pair(15f,2f))
-
-        coordinates.add(Pair(16f,7f))
-        coordinates.add(Pair(20f,9f))
-        coordinates.add(Pair(21f,3f))
-        coordinates.add(Pair(22f,9f))
-        coordinates.add(Pair(23f,7f))
-        coordinates.add(Pair(25f,11f))
-
-        coordinates.add(Pair(28f,2f))
-        coordinates.add(Pair(30f,5f))
-        coordinates.add(Pair(31f,3f))
-        coordinates.add(Pair(32f,11f))
-        coordinates.add(Pair(33f,9f))
-        coordinates.add(Pair(35f,3f))
+//
+//        coordinates.add(Pair(9f,2f))
+//        coordinates.add(Pair(10f,4f))
+//        coordinates.add(Pair(11f,3f))
+//        coordinates.add(Pair(12f,5f))
+//        coordinates.add(Pair(13f,4f))
+//        coordinates.add(Pair(15f,2f))
+//
+//        coordinates.add(Pair(16f,7f))
+//        coordinates.add(Pair(20f,9f))
+//        coordinates.add(Pair(21f,3f))
+//        coordinates.add(Pair(22f,9f))
+//        coordinates.add(Pair(23f,7f))
+//        coordinates.add(Pair(25f,11f))
+//
+//        coordinates.add(Pair(28f,2f))
+//        coordinates.add(Pair(30f,5f))
+//        coordinates.add(Pair(31f,3f))
+//        coordinates.add(Pair(32f,11f))
+//        coordinates.add(Pair(33f,9f))
+//        coordinates.add(Pair(35f,3f))
 //
         coordinates.add(Pair(37f,7f))
         coordinates.add(Pair(39f,6f))
