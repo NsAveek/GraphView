@@ -136,7 +136,6 @@ class GraphView @JvmOverloads constructor(context: Context, attrs: AttributeSet?
     override fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {
         actualWidth = w-extraPadding.toInt()
         actualHeight = h
-//        actualHeight = h-extraPadding.toInt()
         val positions = floatArrayOf(0f,1f)
         gradientPaint.shader = LinearGradient(0f, 0f, 0f, actualHeight.toFloat(), colorsArray,positions, Shader.TileMode.CLAMP)
         super.onSizeChanged(w, h, oldw, oldh)
@@ -145,6 +144,7 @@ class GraphView @JvmOverloads constructor(context: Context, attrs: AttributeSet?
     override fun onDraw(canvas: Canvas) {
         super.onDraw(canvas)
 
+        drawGridLines(canvas)
         drawGradients(canvas)
         drawCoordinates(canvas)
         drawGraduations(canvas)
@@ -192,7 +192,6 @@ class GraphView @JvmOverloads constructor(context: Context, attrs: AttributeSet?
 //        path.close()
         canvas.drawPath(path, gradientPaint)
     }
-
     private fun drawCoordinates(canvas: Canvas) {
         path.reset()
         var firstPathDraw : Boolean = true
@@ -228,6 +227,19 @@ class GraphView @JvmOverloads constructor(context: Context, attrs: AttributeSet?
             Log.d("x : y = ", i.first.toString() + " : " + i.second.toString())
         }
         canvas.drawPath(path, pathPaint)
+    }
+    private fun drawGridLines(canvas: Canvas){
+        for (k in 0..maxYValue.toInt()+1){
+            for (i in 0..maxXValue.toInt()+1){
+                canvas.drawLine(reCalculateExactCoordinateWithPadding(i.toFloat()*eachPixelAllocationX,true),reCalculateExactCoordinateWithPadding(translateToCanvasY(k.toFloat()*eachPixelAllocationY),false),reCalculateExactCoordinateWithPadding(maxXValue*eachPixelAllocationX, true),reCalculateExactCoordinateWithPadding(translateToCanvasY(k.toFloat()*eachPixelAllocationY),false),graduationPathPaint)
+            }
+        }
+        for (k in 0..maxXValue.toInt()+1){
+            for (i in 0..maxYValue.toInt()+1){
+                canvas.drawLine(reCalculateExactCoordinateWithPadding(k.toFloat()*eachPixelAllocationX,true),reCalculateExactCoordinateWithPadding(translateToCanvasY(i.toFloat()*eachPixelAllocationY),false),reCalculateExactCoordinateWithPadding(k*eachPixelAllocationX, true),reCalculateExactCoordinateWithPadding(translateToCanvasY(maxYValue*eachPixelAllocationY),false),graduationPathPaint)
+            }
+        }
+
     }
     private fun drawGraduations(canvas: Canvas){
         for (i in 0..maxYValue.toInt()){
