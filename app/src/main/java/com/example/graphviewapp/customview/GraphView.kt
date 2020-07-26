@@ -7,17 +7,22 @@ import android.util.Log
 import android.view.View
 import androidx.core.content.ContextCompat
 import com.example.graphviewapp.R
+import java.util.concurrent.TimeUnit
 import kotlin.math.max
 
 
 // TODO
 // 1. Get points or co-ordinates from the user/system - Done
-// 2. Get colors from the user/system
+// 2. Get colors from the user/system - Done
+// 4. Get the thickness of the lines from the user/system - Done
+
 // 3. Get the graph shape (i.e : Bar, Pie ) from the user/system
-// 4. Get the thickness of the lines from the user/system
 // 5. Get the interval (i.e: 200,300,400) from the user/system
 // 6. Get the initial starting co-ordinates from the user/system ( i.e: topToBottom or bottomToTop)
-
+// 7. Get the circle to be drawn before or after path from User
+// 8. Get the Gradient Color from User
+// 9. Get the Gradient values from user
+// 10.Get
 
 // Graph to be stretched to the end corner : eachPixelAllocationX = (measuredWidth - extraPadding*2)/(maxX-minX)
 // Graph to be drawn at exact location starting to the left border : eachPixelAllocationX = (measuredWidth - extraPadding*2)/maxX
@@ -26,13 +31,13 @@ import kotlin.math.max
 class GraphView @JvmOverloads constructor(context: Context, attrs: AttributeSet? = null) :
     View(context, attrs) {
 
-    private var path: Path
-    private var pathPaint: Paint
-    private var gradientPaint: Paint
-    private var graduationPathPaint: Paint
+    private lateinit var path: Path
+    private lateinit var pathPaint: Paint
+    private lateinit var gradientPaint: Paint
+    private lateinit var graduationPathPaint: Paint
 
-    private var colorsArray: IntArray
-    private var circlePaint: Paint
+    private lateinit var colorsArray: IntArray
+    private lateinit var circlePaint: Paint
 
     private var extraPadding = convertDpToPx(10f)
 
@@ -48,40 +53,47 @@ class GraphView @JvmOverloads constructor(context: Context, attrs: AttributeSet?
     private var actualWidth = 0
     private var actualHeight = 0
 
+    private var circleRadius = 3f
 
     init {
-        val a = context.obtainStyledAttributes(
+        val typedArray = context.obtainStyledAttributes(
                 attrs, R.styleable.GraphView)
-        colorsArray = intArrayOf(
-                ContextCompat.getColor(context, R.color.startColor),
-                ContextCompat.getColor(
-                        context,
-                        R.color.endColor)) // TODO : Take the input from User
+        try {
+            colorsArray = intArrayOf(
+                    typedArray.getColor(R.styleable.GraphView_gradientStartColor,ContextCompat.getColor(context, R.color.startColor)),
+                    typedArray.getColor(R.styleable.GraphView_gradientEndColor ,ContextCompat.getColor(context, R.color.endColor)))
 
-        path = Path()
+            path = Path()
 
-        pathPaint = Paint().apply {
-            color = ContextCompat.getColor(context, R.color.pathColor)
-            isAntiAlias = true
-            style = Paint.Style.STROKE
-            strokeWidth = convertDpToPx(2f) // TODO : Take the input from the user
-            isDither = true
+            pathPaint = Paint().apply {
+                color = typedArray.getColor(
+                        R.styleable.GraphView_lineColor,
+                        ContextCompat.getColor(context, R.color.pathColor))
+                isAntiAlias = true
+                style = Paint.Style.STROKE
+                strokeWidth = convertDpToPx(typedArray.getInteger(R.styleable.GraphView_pathWidth,2).toFloat())
+                isDither = true
+            }
+            gradientPaint = Paint().apply {
+                isAntiAlias = true
+                style = Paint.Style.FILL
+            }
+            graduationPathPaint = Paint().apply {
+                style = Paint.Style.STROKE
+                isAntiAlias = true
+                color = ContextCompat.getColor(context, R.color.graduationColor) // TODO : Take the input from the user
+                textSize = convertDpToPx(10f)// TODO : Take the input from the user
+            }
+            circlePaint = Paint().apply {
+                color = typedArray.getColor(R.styleable.GraphView_circleColor,ContextCompat.getColor(context, R.color.pathColor))
+                isAntiAlias = true
+            }
+            circleRadius = convertDpToPx(typedArray.getInteger(R.styleable.GraphView_circleRadius,3).toFloat())
+
+        } catch (e: Exception) {
+        } finally {
+            typedArray.recycle()
         }
-        gradientPaint = Paint().apply {
-            isAntiAlias = true
-            style = Paint.Style.FILL
-        }
-        graduationPathPaint = Paint().apply {
-            style = Paint.Style.STROKE
-            isAntiAlias = true
-            color = ContextCompat.getColor(context, R.color.graduationColor)
-            textSize = convertDpToPx(10f)
-        }
-        circlePaint = Paint().apply {
-            color = ContextCompat.getColor(context, R.color.pathColor)
-            isAntiAlias = true
-        }
-        a.recycle()
     }
 
     fun setCoordinatePoints(coordinates: ArrayList<Pair<Float, Float>>) {
@@ -289,7 +301,7 @@ class GraphView @JvmOverloads constructor(context: Context, attrs: AttributeSet?
 
     private fun drawCircle(canvas: Canvas, cx: Float, cy: Float) {
         canvas.drawCircle(
-                cx, cy, convertDpToPx(3f), circlePaint)// TODO : Take the input from the user
+                cx, cy, circleRadius, circlePaint)// TODO : Take the input from the user
     }
 
     private fun reCalculateExactCoordinateWithPadding(coord: Float, x: Boolean): Float {

@@ -1,9 +1,11 @@
 <resources>
     <declare-styleable name="GraphView">
         <attr name="lineColor" format="color"/>
-        <attr name="exampleString" format="string" />
-        <attr name="exampleDimension" format="dimension" />
-        <attr name="exampleColor" format="color" />
-        <attr name="exampleDrawable" format="color|reference" />
+        <attr name="gradientStartColor" format="color"/>
+        <attr name="gradientEndColor" format="color"/>
+        <attr name="circleColor" format="color"/>
+        
+        <attr name="circleRadius" format="integer"/>
+        <attr name="pathWidth" format="integer"/>
     </declare-styleable>
 </resources>
