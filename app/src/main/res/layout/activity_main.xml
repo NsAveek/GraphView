@@ -52,9 +52,10 @@
         app:pathWidth="2"
         app:gridColor="#fef08c"
         app:pathOnTop="false"
-        app:drawGrids="false"
-        app:drawGraduations="false"
+        app:drawGrids="true"
+        app:drawGraduations="true"
         app:graduationColor="@color/colorPrimaryDark"
+        app:graphType="TOUCH_END"
         />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

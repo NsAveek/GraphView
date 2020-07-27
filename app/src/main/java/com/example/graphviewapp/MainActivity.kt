@@ -25,8 +25,8 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun initCoordinates() {
-        coordinates.add(Pair(0f,0f))
-        coordinates.add(Pair(1f,2f))
+//        coordinates.add(Pair(0f,0f))
+//        coordinates.add(Pair(1f,2f))
         coordinates.add(Pair(3f,4f))
         coordinates.add(Pair(4f,3f))
         coordinates.add(Pair(5f,5f))
@@ -38,7 +38,8 @@ class MainActivity : AppCompatActivity() {
         coordinates.add(Pair(11f,3f))
         coordinates.add(Pair(12f,5f))
         coordinates.add(Pair(13f,4f))
-        coordinates.add(Pair(15f,2f))
+//        coordinates.add(Pair(15f,2f))
+        coordinates.add(Pair(17f,2f))
 
 //        coordinates.add(Pair(16f,7f))
 //        coordinates.add(Pair(20f,9f))

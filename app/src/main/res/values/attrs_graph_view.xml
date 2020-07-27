@@ -1,18 +1,29 @@
 <resources>
     <declare-styleable name="GraphView">
-        <attr name="lineColor" format="color"/>
-        <attr name="gradientStartColor" format="color"/>
-        <attr name="gradientEndColor" format="color"/>
-        <attr name="circleColor" format="color"/>
-        <attr name="gridColor" format="color"/>
-        <attr name="graduationColor" format="color"/>
+        <attr name="lineColor" format="color" />
+        <attr name="gradientStartColor" format="color" />
+        <attr name="gradientEndColor" format="color" />
+        <attr name="circleColor" format="color" />
+        <attr name="gridColor" format="color" />
+        <attr name="graduationColor" format="color" />
 
-        <attr name="circleRadius" format="integer"/>
-        <attr name="pathWidth" format="integer"/>
+        <attr name="circleRadius" format="integer" />
+        <attr name="pathWidth" format="integer" />
 
-        <attr name="pathOnTop" format="boolean"/>
-        <attr name="drawGrids" format="boolean"/>
-        <attr name="drawGraduations" format="boolean"/>
+        <attr name="pathOnTop" format="boolean" />
+        <attr name="drawGrids" format="boolean" />
+        <attr name="drawGraduations" format="boolean" />
+
+        <!--        <attr name="graphOrientation" format="enum">-->
+        <!--            <enum name="TOP_TO_BOTTOM" value="0"/>-->
+        <!--            <enum name="BOTTOM_TO_TOP" value="1"/>-->
+        <!--        </attr>-->
+        <attr name="graphType" format="enum">
+            <enum name="START_AT_LEFT" value="0" />
+            <enum name="EXACT" value="1" />
+            <enum name="TOUCH_END" value="2" />
+        </attr>
+
 
     </declare-styleable>
 </resources>

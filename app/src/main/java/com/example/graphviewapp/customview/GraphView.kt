@@ -4,9 +4,6 @@ import android.content.Context
 import android.graphics.*
 import android.util.AttributeSet
 import android.util.Log
-import android.view.MotionEvent
-import android.view.ScaleGestureDetector
-import android.view.ScaleGestureDetector.SimpleOnScaleGestureListener
 import android.view.View
 import androidx.core.content.ContextCompat
 import com.example.graphviewapp.R
@@ -28,6 +25,9 @@ import com.example.graphviewapp.R
 // Graph to be drawn at exact location starting to the left border : eachPixelAllocationX = (measuredWidth - extraPadding*2)/maxX
 // Graph to be drawn at exact location  : eachPixelAllocationX = (measuredWidth - extraPadding*2)/maxX && no need to draw initCoordinate - i.first at DrawCoordinates, just print i.first
 
+enum class GraphType {
+    START_AT_LEFT, EXACT, TOUCH_END
+}
 
 class GraphView @JvmOverloads constructor(context: Context, attrs: AttributeSet? = null) :
     View(context, attrs) {
@@ -57,28 +57,41 @@ class GraphView @JvmOverloads constructor(context: Context, attrs: AttributeSet?
 
     private var circleRadius = 3f
 
-    private var pathOnTop : Boolean = false
-    private var drawGrids : Boolean = false
-    private var drawGraduations : Boolean = false
+    private var pathOnTop: Boolean = false
+    private var drawGrids: Boolean = false
+    private var drawGraduations: Boolean = false
+
+//    private lateinit var graphType: GraphType
 
     init {
         val typedArray = context.obtainStyledAttributes(
-                attrs, R.styleable.GraphView)
+            attrs, R.styleable.GraphView
+        )
 
         try {
             colorsArray = intArrayOf(
-                    typedArray.getColor(R.styleable.GraphView_gradientStartColor,ContextCompat.getColor(context, R.color.startColor)),
-                    typedArray.getColor(R.styleable.GraphView_gradientEndColor ,ContextCompat.getColor(context, R.color.endColor)))
+                typedArray.getColor(
+                    R.styleable.GraphView_gradientStartColor,
+                    ContextCompat.getColor(context, R.color.startColor)
+                ),
+                typedArray.getColor(
+                    R.styleable.GraphView_gradientEndColor,
+                    ContextCompat.getColor(context, R.color.endColor)
+                )
+            )
 
             path = Path()
 
             pathPaint = Paint().apply {
                 color = typedArray.getColor(
-                        R.styleable.GraphView_lineColor,
-                        ContextCompat.getColor(context, R.color.pathColor))
+                    R.styleable.GraphView_lineColor,
+                    ContextCompat.getColor(context, R.color.pathColor)
+                )
                 isAntiAlias = true
                 style = Paint.Style.STROKE
-                strokeWidth = convertDpToPx(typedArray.getInteger(R.styleable.GraphView_pathWidth,2).toFloat())
+                strokeWidth = convertDpToPx(
+                    typedArray.getInteger(R.styleable.GraphView_pathWidth, 2).toFloat()
+                )
                 isDither = true
             }
             gradientPaint = Paint().apply {
@@ -90,24 +103,32 @@ class GraphView @JvmOverloads constructor(context: Context, attrs: AttributeSet?
                 isAntiAlias = true
                 color = typedArray.getColor(
                     R.styleable.GraphView_gridColor,
-                    ContextCompat.getColor(context, R.color.gridColor))
+                    ContextCompat.getColor(context, R.color.gridColor)
+                )
             }
             graduationPathPaint = Paint().apply {
                 style = Paint.Style.STROKE
                 isAntiAlias = true
                 color = typedArray.getColor(
                     R.styleable.GraphView_graduationColor,
-                    ContextCompat.getColor(context, R.color.graduationColor))
+                    ContextCompat.getColor(context, R.color.graduationColor)
+                )
                 textSize = convertDpToPx(10f)// TODO : Take the input from the user
             }
             circlePaint = Paint().apply {
-                color = typedArray.getColor(R.styleable.GraphView_circleColor,ContextCompat.getColor(context, R.color.pathColor))
+                color = typedArray.getColor(
+                    R.styleable.GraphView_circleColor,
+                    ContextCompat.getColor(context, R.color.pathColor)
+                )
                 isAntiAlias = true
             }
-            circleRadius = convertDpToPx(typedArray.getInteger(R.styleable.GraphView_circleRadius,3).toFloat())
+            circleRadius = convertDpToPx(
+                typedArray.getInteger(R.styleable.GraphView_circleRadius, 3).toFloat()
+            )
             pathOnTop = typedArray.getBoolean(R.styleable.GraphView_pathOnTop, true)
             drawGrids = typedArray.getBoolean(R.styleable.GraphView_drawGrids, true)
             drawGraduations = typedArray.getBoolean(R.styleable.GraphView_drawGraduations, true)
+//            graphType = GraphType.values()[typedArray.getInt(R.styleable.GraphView_graphType, 1)]
 
         } catch (e: Exception) {
         } finally {
@@ -163,10 +184,17 @@ class GraphView @JvmOverloads constructor(context: Context, attrs: AttributeSet?
         super.onMeasure(widthMeasureSpec, heightMeasureSpec)
         val measuredWidth = MeasureSpec.getSize(widthMeasureSpec)
         val measuredHeight = MeasureSpec.getSize(heightMeasureSpec)
+
         eachPixelAllocationX = (measuredWidth - extraPadding * 2) / (maxXValue - minXValue)
+//        eachPixelAllocationX = when (graphType) {
+//            GraphType.EXACT -> (measuredWidth - extraPadding * 2) / (maxXValue - minXValue)
+//            GraphType.START_AT_LEFT -> (measuredWidth - extraPadding * 2) / (maxXValue - minXValue)
+//            else -> (measuredWidth - extraPadding * 2) / (maxXValue)
+//        }
         eachPixelAllocationY = (measuredHeight - extraPadding * 2) / (maxYValue)
         setMeasuredDimension(
-                measuredWidth, measuredHeight)
+            measuredWidth, measuredHeight
+        )
     }
 
     override fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {
@@ -174,9 +202,11 @@ class GraphView @JvmOverloads constructor(context: Context, attrs: AttributeSet?
         actualHeight = h
         val positions = floatArrayOf(0f, 1f)
         gradientPaint.shader = LinearGradient(
-                0f, 0f, 0f, actualHeight.toFloat(), colorsArray, positions, Shader.TileMode.CLAMP)
+            0f, 0f, 0f, actualHeight.toFloat(), colorsArray, positions, Shader.TileMode.CLAMP
+        )
         super.onSizeChanged(w, h, oldw, oldh)
     }
+
 
     override fun onDraw(canvas: Canvas) {
         super.onDraw(canvas)
@@ -201,30 +231,41 @@ class GraphView @JvmOverloads constructor(context: Context, attrs: AttributeSet?
                 initCoordinateX = i.first
                 initCoordinateY = i.second
                 path.moveTo(
-                        reCalculateExactCoordinateWithPadding(
-                                (initCoordinateX - i.first) * eachPixelAllocationX, true),
-                        reCalculateExactCoordinateWithPadding(
-                                translateToCanvasY((initCoordinateY - i.second) * eachPixelAllocationY),
-                                false))
+                    reCalculateExactCoordinateWithPadding(
+                        (initCoordinateX - i.first) * eachPixelAllocationX, true
+                    ),
+                    reCalculateExactCoordinateWithPadding(
+                        translateToCanvasY((initCoordinateY - i.second) * eachPixelAllocationY),
+                        false
+                    )
+                )
                 firstPathDraw = false
 
                 path.lineTo(
-                        reCalculateExactCoordinateWithPadding(
-                                (initCoordinateX - i.first) * eachPixelAllocationX, true),
-                        reCalculateExactCoordinateWithPadding(
-                                translateToCanvasY(i.second * eachPixelAllocationY), false))
+                    reCalculateExactCoordinateWithPadding(
+                        (initCoordinateX - i.first) * eachPixelAllocationX, true
+                    ),
+                    reCalculateExactCoordinateWithPadding(
+                        translateToCanvasY(i.second * eachPixelAllocationY), false
+                    )
+                )
             } else {
                 path.lineTo(
-                        reCalculateExactCoordinateWithPadding(
-                                (i.first - initCoordinateX) * eachPixelAllocationX, true),
-                        reCalculateExactCoordinateWithPadding(
-                                translateToCanvasY(i.second * eachPixelAllocationY), false))
+                    reCalculateExactCoordinateWithPadding(
+                        (i.first - initCoordinateX) * eachPixelAllocationX, true
+                    ),
+                    reCalculateExactCoordinateWithPadding(
+                        translateToCanvasY(i.second * eachPixelAllocationY), false
+                    )
+                )
             }
         }
         path.lineTo(
-                reCalculateExactCoordinateWithPadding(
-                        (maxXValue - initCoordinateX) * eachPixelAllocationX, true),
-                reCalculateExactCoordinateWithPadding(canvas.height.toFloat(), false))
+            reCalculateExactCoordinateWithPadding(
+                (maxXValue - initCoordinateX) * eachPixelAllocationX, true
+            ),
+            reCalculateExactCoordinateWithPadding(canvas.height.toFloat(), false)
+        )
 
         canvas.drawPath(path, gradientPaint)
     }
@@ -255,6 +296,7 @@ class GraphView @JvmOverloads constructor(context: Context, attrs: AttributeSet?
                         reCalculateExactCoordinateWithPadding(
                                 translateToCanvasY(i.second * eachPixelAllocationY), false))
             } else {
+
                 path.lineTo(
                         reCalculateExactCoordinateWithPadding(
                                 (i.first - initCoordinateX) * eachPixelAllocationX, true),
@@ -278,27 +320,35 @@ class GraphView @JvmOverloads constructor(context: Context, attrs: AttributeSet?
         for (k in 0..maxYValue.toInt()) {
             for (i in 0..maxXValue.toInt()) {
                 canvas.drawLine(
-                        reCalculateExactCoordinateWithPadding(
-                                (i.toFloat() * eachPixelAllocationX), true),
-                        reCalculateExactCoordinateWithPadding(
-                                translateToCanvasY(k.toFloat() * eachPixelAllocationY), false),
-                        (maxXValue * eachPixelAllocationX),
-                        reCalculateExactCoordinateWithPadding(
-                                translateToCanvasY(k.toFloat() * eachPixelAllocationY), false),
-                        gridPaint)
+                    reCalculateExactCoordinateWithPadding(
+                        (i.toFloat() * eachPixelAllocationX), true
+                    ),
+                    reCalculateExactCoordinateWithPadding(
+                        translateToCanvasY(k.toFloat() * eachPixelAllocationY), false
+                    ),
+                    (maxXValue * eachPixelAllocationX),
+                    reCalculateExactCoordinateWithPadding(
+                        translateToCanvasY(k.toFloat() * eachPixelAllocationY), false
+                    ),
+                    gridPaint
+                )
             }
         }
         for (k in 0..maxXValue.toInt()) {
             for (i in 0..maxYValue.toInt()) {
                 canvas.drawLine(
-                        reCalculateExactCoordinateWithPadding(
-                                k.toFloat() * eachPixelAllocationX, true),
-                        reCalculateExactCoordinateWithPadding(
-                                translateToCanvasY(i.toFloat() * eachPixelAllocationY), false),
-                        reCalculateExactCoordinateWithPadding(k * eachPixelAllocationX, true),
-                        reCalculateExactCoordinateWithPadding(
-                                translateToCanvasY(maxYValue * eachPixelAllocationY), false),
-                        gridPaint)
+                    reCalculateExactCoordinateWithPadding(
+                        k.toFloat() * eachPixelAllocationX, true
+                    ),
+                    reCalculateExactCoordinateWithPadding(
+                        translateToCanvasY(i.toFloat() * eachPixelAllocationY), false
+                    ),
+                    reCalculateExactCoordinateWithPadding(k * eachPixelAllocationX, true),
+                    reCalculateExactCoordinateWithPadding(
+                        translateToCanvasY(maxYValue * eachPixelAllocationY), false
+                    ),
+                    gridPaint
+                )
             }
         }
 
@@ -307,25 +357,30 @@ class GraphView @JvmOverloads constructor(context: Context, attrs: AttributeSet?
     private fun drawGraduations(canvas: Canvas) {
         for (i in 0..maxYValue.toInt()) {
             canvas.drawText(
-                    i.toString(),
-                    reCalculateExactCoordinateWithPadding(0f, true),
-                    reCalculateExactCoordinateWithPadding(
-                            translateToCanvasY(i * eachPixelAllocationY), false),
-                    graduationPathPaint)
+                i.toString(),
+                reCalculateExactCoordinateWithPadding(0f, true),
+                reCalculateExactCoordinateWithPadding(
+                    translateToCanvasY(i * eachPixelAllocationY), false
+                ),
+                graduationPathPaint
+            )
         }
         for (i in 0..maxXValue.toInt()) {
             canvas.drawText(
-                    i.toString(),
-                    reCalculateExactCoordinateWithPadding(i * eachPixelAllocationX, true),
-                    reCalculateExactCoordinateWithPadding(canvas.height.toFloat(), false),
-                    graduationPathPaint)
+                i.toString(),
+                reCalculateExactCoordinateWithPadding(i * eachPixelAllocationX, true),
+                reCalculateExactCoordinateWithPadding(canvas.height.toFloat(), false),
+                graduationPathPaint
+            )
         }
     }
 
     private fun drawCircle(canvas: Canvas, cx: Float, cy: Float) {
         canvas.drawCircle(
-                cx, cy, circleRadius, circlePaint)// TODO : Take the input from the user
+            cx, cy, circleRadius, circlePaint
+        )// TODO : Take the input from the user
     }
+
 
     private fun reCalculateExactCoordinateWithPadding(coord: Float, x: Boolean): Float {
         return when (x) {
