@@ -30,32 +30,58 @@
     <com.example.graphviewapp.customview.GraphView
         android:id="@+id/graphView"
         android:layout_width="match_parent"
-        android:layout_height="100dp"
+        android:layout_height="182dp"
+        android:layout_marginTop="8dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textView"
-        app:layout_constraintVertical_bias="0.120000005" />
+        app:layout_constraintVertical_bias="0.0" />
 
     <com.example.graphviewapp.customview.GraphView
         android:id="@+id/graphView2"
-        android:layout_width="match_parent"
-        android:layout_height="400dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/graphView"
+        android:layout_width="405dp"
+        android:layout_height="182dp"
+        android:layout_marginTop="8dp"
 
-        app:lineColor="#f8cb7a"
-        app:gradientStartColor="#fef08c"
-        app:gradientEndColor="@color/endColor"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/graphView"
+        app:layout_constraintVertical_bias="0.0"
+
         app:circleColor="#000000"
         app:circleRadius="3"
-        app:pathWidth="2"
-        app:gridColor="#fef08c"
-        app:pathOnTop="false"
-        app:drawGrids="true"
         app:drawGraduations="true"
+        app:drawGrids="true"
+        app:gradientEndColor="@color/endColor"
+        app:gradientStartColor="#fef08c"
         app:graduationColor="@color/colorPrimaryDark"
+        app:graphType="START_AT_LEFT"
+        app:gridColor="#fef08c"
+
+        app:lineColor="#f8cb7a"
+        app:pathOnTop="false"
+        app:pathWidth="2" />
+
+    <com.example.graphviewapp.customview.GraphView
+        android:id="@+id/graphView3"
+        android:layout_width="match_parent"
+        android:layout_height="182dp"
+        android:layout_marginTop="8dp"
+
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/graphView2"
+        app:layout_constraintVertical_bias="0.0"
+
+        app:drawGraduations="true"
+        app:drawGrids="true"
+        app:gradientEndColor="@color/endColor"
+        app:gradientStartColor="#fef08c"
         app:graphType="TOUCH_END"
+        app:pathOnTop="false"
         />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

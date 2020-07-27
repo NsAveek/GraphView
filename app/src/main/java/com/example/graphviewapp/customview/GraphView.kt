@@ -41,7 +41,7 @@ class GraphView @JvmOverloads constructor(context: Context, attrs: AttributeSet?
     private lateinit var colorsArray: IntArray
     private lateinit var circlePaint: Paint
 
-    private var extraPadding = convertDpToPx(10f)
+    private var extraPadding = convertDpToPx(10f) // TODO : Take input from the user
 
     private lateinit var coordinates: ArrayList<Pair<Float, Float>>
     private var maxXValue: Float = 0f
@@ -61,7 +61,7 @@ class GraphView @JvmOverloads constructor(context: Context, attrs: AttributeSet?
     private var drawGrids: Boolean = false
     private var drawGraduations: Boolean = false
 
-//    private lateinit var graphType: GraphType
+    private lateinit var graphType: GraphType
 
     init {
         val typedArray = context.obtainStyledAttributes(
@@ -128,9 +128,11 @@ class GraphView @JvmOverloads constructor(context: Context, attrs: AttributeSet?
             pathOnTop = typedArray.getBoolean(R.styleable.GraphView_pathOnTop, true)
             drawGrids = typedArray.getBoolean(R.styleable.GraphView_drawGrids, true)
             drawGraduations = typedArray.getBoolean(R.styleable.GraphView_drawGraduations, true)
-//            graphType = GraphType.values()[typedArray.getInt(R.styleable.GraphView_graphType, 1)]
+            graphType = GraphType.values()[typedArray.getInt(R.styleable.GraphView_graphType, 1)]
 
         } catch (e: Exception) {
+
+
         } finally {
             typedArray.recycle()
         }
@@ -185,12 +187,12 @@ class GraphView @JvmOverloads constructor(context: Context, attrs: AttributeSet?
         val measuredWidth = MeasureSpec.getSize(widthMeasureSpec)
         val measuredHeight = MeasureSpec.getSize(heightMeasureSpec)
 
-        eachPixelAllocationX = (measuredWidth - extraPadding * 2) / (maxXValue - minXValue)
-//        eachPixelAllocationX = when (graphType) {
-//            GraphType.EXACT -> (measuredWidth - extraPadding * 2) / (maxXValue - minXValue)
-//            GraphType.START_AT_LEFT -> (measuredWidth - extraPadding * 2) / (maxXValue - minXValue)
-//            else -> (measuredWidth - extraPadding * 2) / (maxXValue)
-//        }
+//        eachPixelAllocationX = (measuredWidth - extraPadding * 2) / (maxXValue - minXValue)
+        eachPixelAllocationX = when (graphType) {
+            GraphType.EXACT -> (measuredWidth - extraPadding * 2) / (maxXValue)
+            GraphType.START_AT_LEFT -> (measuredWidth - extraPadding * 2) / (maxXValue)
+            else -> (measuredWidth - extraPadding * 2) / (maxXValue  - minXValue)
+        }
         eachPixelAllocationY = (measuredHeight - extraPadding * 2) / (maxYValue)
         setMeasuredDimension(
             measuredWidth, measuredHeight
@@ -227,45 +229,80 @@ class GraphView @JvmOverloads constructor(context: Context, attrs: AttributeSet?
         var initCoordinateX = 0f
         var initCoordinateY = 0f
         for (i in coordinates) {
-            if (firstPathDraw) {
-                initCoordinateX = i.first
-                initCoordinateY = i.second
-                path.moveTo(
-                    reCalculateExactCoordinateWithPadding(
-                        (initCoordinateX - i.first) * eachPixelAllocationX, true
-                    ),
-                    reCalculateExactCoordinateWithPadding(
-                        translateToCanvasY((initCoordinateY - i.second) * eachPixelAllocationY),
-                        false
-                    )
-                )
-                firstPathDraw = false
+            when (graphType) {
+                GraphType.EXACT -> {
+                    if (firstPathDraw) {
+                        initCoordinateX = i.first
+                        initCoordinateY = i.second
+                        path.moveTo(
+                                reCalculateExactCoordinateWithPadding(
+                                        (i.first) * eachPixelAllocationX, true),
+                                reCalculateExactCoordinateWithPadding(
+                                        translateToCanvasY((initCoordinateY - i.second) * eachPixelAllocationY),
+                                        false))
+                        firstPathDraw = false
 
-                path.lineTo(
-                    reCalculateExactCoordinateWithPadding(
-                        (initCoordinateX - i.first) * eachPixelAllocationX, true
-                    ),
-                    reCalculateExactCoordinateWithPadding(
-                        translateToCanvasY(i.second * eachPixelAllocationY), false
-                    )
-                )
-            } else {
-                path.lineTo(
-                    reCalculateExactCoordinateWithPadding(
-                        (i.first - initCoordinateX) * eachPixelAllocationX, true
-                    ),
-                    reCalculateExactCoordinateWithPadding(
-                        translateToCanvasY(i.second * eachPixelAllocationY), false
-                    )
-                )
+                        path.lineTo(
+                                reCalculateExactCoordinateWithPadding(
+                                        (i.first) * eachPixelAllocationX, true),
+                                reCalculateExactCoordinateWithPadding(
+                                        translateToCanvasY(i.second * eachPixelAllocationY), false))
+                    }
+                    else {
+                        path.lineTo(
+                                reCalculateExactCoordinateWithPadding(
+                                        (i.first) * eachPixelAllocationX, true),
+                                reCalculateExactCoordinateWithPadding(
+                                        translateToCanvasY(i.second * eachPixelAllocationY), false))
+                    }
+                }
+                else -> {
+                    if (firstPathDraw) {
+                        initCoordinateX = i.first
+                        initCoordinateY = i.second
+                        path.moveTo(
+                                reCalculateExactCoordinateWithPadding(
+                                        (initCoordinateX - i.first) * eachPixelAllocationX, true),
+                                reCalculateExactCoordinateWithPadding(
+                                        translateToCanvasY((initCoordinateY - i.second) * eachPixelAllocationY),
+                                        false))
+                        firstPathDraw = false
+
+                        path.lineTo(
+                                reCalculateExactCoordinateWithPadding(
+                                        (initCoordinateX - i.first) * eachPixelAllocationX, true),
+                                reCalculateExactCoordinateWithPadding(
+                                        translateToCanvasY(i.second * eachPixelAllocationY), false))
+                    }
+                    else {
+                        path.lineTo(
+                                reCalculateExactCoordinateWithPadding(
+                                        (i.first - initCoordinateX) * eachPixelAllocationX, true),
+                                reCalculateExactCoordinateWithPadding(
+                                        translateToCanvasY(i.second * eachPixelAllocationY), false))
+                    }
+                }
             }
         }
-        path.lineTo(
-            reCalculateExactCoordinateWithPadding(
-                (maxXValue - initCoordinateX) * eachPixelAllocationX, true
-            ),
-            reCalculateExactCoordinateWithPadding(canvas.height.toFloat(), false)
-        )
+        when(graphType){
+            GraphType.EXACT -> {
+                path.lineTo(
+                        reCalculateExactCoordinateWithPadding(
+                                (maxXValue) * eachPixelAllocationX, true
+                                                             ),
+                        reCalculateExactCoordinateWithPadding(canvas.height.toFloat(), false)
+                           )
+            }
+            else ->{
+                path.lineTo(
+                        reCalculateExactCoordinateWithPadding(
+                                (maxXValue - initCoordinateX) * eachPixelAllocationX, true
+                                                             ),
+                        reCalculateExactCoordinateWithPadding(canvas.height.toFloat(), false)
+                           )
+            }
+        }
+
 
         canvas.drawPath(path, gradientPaint)
     }
@@ -275,41 +312,66 @@ class GraphView @JvmOverloads constructor(context: Context, attrs: AttributeSet?
         var firstPathDraw: Boolean = true
         var initCoordinateX = 0f
         for (i in coordinates) {
-            if (firstPathDraw) {
-                initCoordinateX = i.first
-                path.moveTo(
-                        reCalculateExactCoordinateWithPadding(
-                                (initCoordinateX - i.first) * eachPixelAllocationX, true),
-                        reCalculateExactCoordinateWithPadding(
-                                translateToCanvasY((i.second) * eachPixelAllocationY), false))
-                firstPathDraw = false
+            when(graphType){
+                GraphType.EXACT -> {
+                    if (firstPathDraw) {
+                        path.moveTo(
+                                reCalculateExactCoordinateWithPadding(
+                                        (i.first) * eachPixelAllocationX, true),
+                                reCalculateExactCoordinateWithPadding(
+                                        translateToCanvasY((i.second) * eachPixelAllocationY),
+                                        false))
+                        firstPathDraw = false
+                    }
+                        path.lineTo(
+                                reCalculateExactCoordinateWithPadding(
+                                        (i.first) * eachPixelAllocationX, true),
+                                reCalculateExactCoordinateWithPadding(
+                                        translateToCanvasY(i.second * eachPixelAllocationY), false))
+                        drawCircle(
+                                canvas,
+                                reCalculateExactCoordinateWithPadding(
+                                        (i.first) * eachPixelAllocationX, true),
+                                reCalculateExactCoordinateWithPadding(
+                                        translateToCanvasY(i.second * eachPixelAllocationY), false))
+                }
+                else -> {
+                    if (firstPathDraw) {
+                        initCoordinateX = i.first
+                        path.moveTo(
+                                reCalculateExactCoordinateWithPadding(
+                                        (initCoordinateX - i.first) * eachPixelAllocationX, true),
+                                reCalculateExactCoordinateWithPadding(
+                                        translateToCanvasY((i.second) * eachPixelAllocationY), false))
+                        firstPathDraw = false
 
-                path.lineTo(
-                        reCalculateExactCoordinateWithPadding(
-                                (initCoordinateX - i.first) * eachPixelAllocationX, true),
-                        reCalculateExactCoordinateWithPadding(
-                                translateToCanvasY(i.second * eachPixelAllocationY), false))
-                drawCircle(
-                        canvas,
-                        reCalculateExactCoordinateWithPadding(
-                                (initCoordinateX - i.first) * eachPixelAllocationX, true),
-                        reCalculateExactCoordinateWithPadding(
-                                translateToCanvasY(i.second * eachPixelAllocationY), false))
-            } else {
-
-                path.lineTo(
-                        reCalculateExactCoordinateWithPadding(
-                                (i.first - initCoordinateX) * eachPixelAllocationX, true),
-                        reCalculateExactCoordinateWithPadding(
-                                translateToCanvasY(i.second * eachPixelAllocationY), false))
-                drawCircle(
-                        canvas,
-                        reCalculateExactCoordinateWithPadding(
-                                (i.first - initCoordinateX) * eachPixelAllocationX, true),
-                        reCalculateExactCoordinateWithPadding(
-                                translateToCanvasY(i.second * eachPixelAllocationY), false))
+                        path.lineTo(
+                                reCalculateExactCoordinateWithPadding(
+                                        (initCoordinateX - i.first) * eachPixelAllocationX, true),
+                                reCalculateExactCoordinateWithPadding(
+                                        translateToCanvasY(i.second * eachPixelAllocationY), false))
+                        drawCircle(
+                                canvas,
+                                reCalculateExactCoordinateWithPadding(
+                                        (initCoordinateX - i.first) * eachPixelAllocationX, true),
+                                reCalculateExactCoordinateWithPadding(
+                                        translateToCanvasY(i.second * eachPixelAllocationY), false))
+                    }
+                    else {
+                        path.lineTo(
+                                reCalculateExactCoordinateWithPadding(
+                                        (i.first - initCoordinateX) * eachPixelAllocationX, true),
+                                reCalculateExactCoordinateWithPadding(
+                                        translateToCanvasY(i.second * eachPixelAllocationY), false))
+                        drawCircle(
+                                canvas,
+                                reCalculateExactCoordinateWithPadding(
+                                        (i.first - initCoordinateX) * eachPixelAllocationX, true),
+                                reCalculateExactCoordinateWithPadding(
+                                        translateToCanvasY(i.second * eachPixelAllocationY), false))
+                    }
+                }
             }
-
 
             Log.d("x : y = ", i.first.toString() + " : " + i.second.toString())
         }

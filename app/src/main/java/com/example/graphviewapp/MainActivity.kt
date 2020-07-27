@@ -18,8 +18,10 @@ class MainActivity : AppCompatActivity() {
 
         val graphView = findViewById<GraphView>(R.id.graphView)
         val graphView2 = findViewById<GraphView>(R.id.graphView2)
+        val graphView3 = findViewById<GraphView>(R.id.graphView3)
         graphView.setCoordinatePoints(coordinates)
         graphView2.setCoordinatePoints(coordinates)
+        graphView3.setCoordinatePoints(coordinates)
 
         initRedrawButton()
     }
