@@ -14,7 +14,8 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.13" />
 
     <Button
         android:id="@+id/redraw"
@@ -28,12 +29,32 @@
 
     <com.example.graphviewapp.customview.GraphView
         android:id="@+id/graphView"
-        android:layout_width="wrap_content"
-        android:layout_height="200dp"
-        android:background="#45d3"
+        android:layout_width="match_parent"
+        android:layout_height="100dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView" />
+        app:layout_constraintTop_toBottomOf="@+id/textView"
+        app:layout_constraintVertical_bias="0.120000005" />
+
+    <com.example.graphviewapp.customview.GraphView
+        android:id="@+id/graphView2"
+        android:layout_width="match_parent"
+        android:layout_height="400dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/graphView"
+
+        app:lineColor="#f8cb7a"
+        app:gradientStartColor="#fef08c"
+        app:gradientEndColor="@color/endColor"
+        app:circleColor="#000000"
+        app:circleRadius="3"
+        app:pathWidth="2"
+        app:gridColor="#fef08c"
+        app:pathOnTop="false"
+        app:drawGrids="false"
+        app:drawGraduations="false"
+        app:graduationColor="@color/colorPrimaryDark"
+        />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
