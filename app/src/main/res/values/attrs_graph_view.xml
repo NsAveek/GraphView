@@ -1,27 +1,28 @@
 <resources>
     <declare-styleable name="GraphView">
-        <attr name="lineColor" format="color" />
-        <attr name="gradientStartColor" format="color" />
-        <attr name="gradientEndColor" format="color" />
-        <attr name="circleColor" format="color" />
-        <attr name="gridColor" format="color" />
-        <attr name="graduationColor" format="color" />
+        <attr name="lineColor" format="color" /> <!-- Self explanatory -->
+        <attr name="gradientStartColor" format="color" /> <!-- Self explanatory -->
+        <attr name="gradientEndColor" format="color" /> <!-- Self explanatory -->
+        <attr name="circleColor" format="color" /> <!-- Self explanatory -->
+        <attr name="gridColor" format="color" /> <!-- Self explanatory -->
+        <attr name="graduationColor" format="color" /> <!-- Self explanatory -->
 
-        <attr name="circleRadius" format="integer" />
-        <attr name="pathWidth" format="integer" />
+        <attr name="circleRadius" format="integer" /> <!-- Self explanatory -->
+        <attr name="pathWidth" format="integer" /> <!-- Self explanatory -->
 
-        <attr name="pathOnTop" format="boolean" />
-        <attr name="drawGrids" format="boolean" />
-        <attr name="drawGraduations" format="boolean" />
+        <attr name="pathOnTop" format="boolean" /> <!-- Draw Path on Top of all other drawing items (i.e: circle, grid, gradients etc. )-->
+        <attr name="drawGrids" format="boolean" /> <!-- Self explanatory -->
+        <attr name="drawGraduations" format="boolean" /> <!-- Draw Graduation (i.e : X,Y values ) with the path drawing or not -->
 
         <!--        <attr name="graphOrientation" format="enum">-->
         <!--            <enum name="TOP_TO_BOTTOM" value="0"/>-->
         <!--            <enum name="BOTTOM_TO_TOP" value="1"/>-->
         <!--        </attr>-->
-        <attr name="graphType" format="enum">
-            <enum name="START_AT_LEFT" value="0" />
-            <enum name="EXACT" value="1" />
-            <enum name="TOUCH_END" value="2" />
+
+        <attr name="graphType" format="enum"> <!-- Indicates 3 different types of graph drawing possible-->
+            <enum name="START_AT_LEFT" value="0" /> <!-- Indicates graph drawing starting from X0 coordinates despite the different x values available -->
+            <enum name="EXACT" value="1" /> <!-- Indicates graph drawing starting from exact X coordinates despite the different x values available -->
+            <enum name="TOUCH_END" value="2" /> <!-- Indicates graph drawing starting from X0 coordinates despite the different x values available but touch the END border of the X coordinates -->
         </attr>
 
 

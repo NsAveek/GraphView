@@ -41,7 +41,7 @@ class GraphView @JvmOverloads constructor(context: Context, attrs: AttributeSet?
     private lateinit var colorsArray: IntArray
     private lateinit var circlePaint: Paint
 
-    private var extraPadding = convertDpToPx(10f) // TODO : Take input from the user
+    private var extraPadding = convertDpToPx(25f) // TODO : Take input from the user
 
     private lateinit var coordinates: ArrayList<Pair<Float, Float>>
     private var maxXValue: Float = 0f
@@ -187,7 +187,6 @@ class GraphView @JvmOverloads constructor(context: Context, attrs: AttributeSet?
         val measuredWidth = MeasureSpec.getSize(widthMeasureSpec)
         val measuredHeight = MeasureSpec.getSize(heightMeasureSpec)
 
-//        eachPixelAllocationX = (measuredWidth - extraPadding * 2) / (maxXValue - minXValue)
         eachPixelAllocationX = when (graphType) {
             GraphType.EXACT -> (measuredWidth - extraPadding * 2) / (maxXValue)
             GraphType.START_AT_LEFT -> (measuredWidth - extraPadding * 2) / (maxXValue)
