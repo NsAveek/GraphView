@@ -23,12 +23,12 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun initCoordinates() {
-        coordinates.add(Pair(1f,2f))
-        coordinates.add(Pair(3f,4f))
-        coordinates.add(Pair(4f,3f))
-        coordinates.add(Pair(5f,5f))
-        coordinates.add(Pair(6f,4f))
-        coordinates.add(Pair(7f,2f))
+        coordinates.add(Pair(100f,200f))
+        coordinates.add(Pair(300f,400f))
+        coordinates.add(Pair(400f,300f))
+        coordinates.add(Pair(500f,500f))
+        coordinates.add(Pair(600f,400f))
+        coordinates.add(Pair(700f,200f))
     }
     private fun initRedrawButton(){
         button = findViewById(R.id.redraw)
