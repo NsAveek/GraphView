@@ -1,4 +1,4 @@
-package com.example.graphviewapp.customview
+package com.aveek.aesthetic_graphview
 
 import android.content.Context
 import android.graphics.*
@@ -6,8 +6,6 @@ import android.util.AttributeSet
 import android.util.Log
 import android.view.View
 import androidx.core.content.ContextCompat
-import com.example.graphviewapp.R
-
 
 // TODO
 // 1. Get points or co-ordinates from the user/system - Done
@@ -41,7 +39,7 @@ class GraphView @JvmOverloads constructor(context: Context, attrs: AttributeSet?
     private lateinit var colorsArray: IntArray
     private lateinit var circlePaint: Paint
 
-    private var extraPadding = convertDpToPx(25f) // TODO : Take input from the user
+    private var extraPadding = convertDpToPx(10f) // TODO : Take input from the user
 
     private lateinit var coordinates: ArrayList<Pair<Float, Float>>
     private var maxXValue: Float = 0f
