@@ -2,7 +2,7 @@
 [![](https://jitpack.io/v/NsAveek/GraphView.svg)](https://jitpack.io/#NsAveek/GraphView)
 [![Android Arsenal]( https://img.shields.io/badge/Android%20Arsenal-Aesthetic%20GraphView-green.svg?style=flat )]( https://android-arsenal.com/details/1/8138 )
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
-[](https://img.shields.io/badge/Support%20OS-JellyBean%204.1%2B-green)
+
 ## A simple graph library unlike other available libraries in the graph drawing arena. 
 
 ![Sample Graph Image](https://github.com/NsAveek/GraphView/blob/master/app/src/main/res/drawable/sample_graph.png)
