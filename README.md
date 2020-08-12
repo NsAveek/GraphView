@@ -158,6 +158,14 @@ app:graphType="TOUCH_END"
 ```
 app:graphType="EXACT"
 ```
+
+# Future Task
+* Make it scrollable
+  * When there are a lots of data and user wants to see in a scrollview
+  * When the TOUCH_END parameters called and user want to see in a scrollview
+* Allow Multiple graphs to be drawn one top of another based on user's choice
+* Add the graduation parameters (i.e: User may want to see Monthly data, so the graduation will be Jan, Feb, Mar etc. The graph will fit into the monthly block accordingly. 	 Currently user can see only X co-ordinates value) 
+
 # LICENSE
 ```
 Copyright 2020 Aveek
